@@ -1,7 +1,7 @@
-from backend.feedback_agent import FeedbackAgent
+from backend.feedback_agentM import FeedbackAgent
 
 
-class FeedbackAgentWrapper:
+class FeedbackAgentWrapperM:  # Changed from FeedbackAgentWrapper to FeedbackAgentWrapperM
     def __init__(self):
         self.agent = FeedbackAgent()
         self.run_graph = self.agent.run_step_by_step()

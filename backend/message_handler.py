@@ -3,18 +3,19 @@ import csv
 from typing import List
 
 
-def read_messages(filepath: str, columns: List[str]= ["ID", "Message"]) -> List[List[str]]:
-    """Reads a CSV file and returns specific columns as a list of lists."""
+def read_messages(filepath: str) -> List[dict]:
+    """Reads all complaints from the CSV file."""
     with open(filepath, newline='', encoding='utf-8') as file:
-        reader = csv.DictReader(file)  # Using DictReader for column name-based access
-        extracted_data = []
-        
-        # Iterate over each row and extract specified columns
+        reader = csv.DictReader(file)
+        messages = []
         for row in reader:
-            extracted_row = [row[col] for col in columns if col in row]
-            extracted_data.append(extracted_row)
-    
-    return extracted_data
+            messages.append({
+                "id": row["DialogID"],
+                "Customer Complaint Dialog": row["CustomerComplaintDialog"],
+                "Date & Time Created": row["Date&TimeCreated"],
+                "Date & Time Ended": row["Date&TimeEnded"]
+            })
+    return messages
 
 def match_categories(summaries, categories):
     result = []

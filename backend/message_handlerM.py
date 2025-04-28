@@ -3,28 +3,69 @@ import csv
 from typing import List
 
 
-def read_messages(filepath: str, columns: List[str]= ["ID", "Message"]) -> List[List[str]]:
-    """Reads a CSV file and returns specific columns as a list of lists."""
-    with open(filepath, newline='', encoding='utf-8') as file:
-        reader = csv.DictReader(file)  # Using DictReader for column name-based access
-        extracted_data = []
-        
-        # Iterate over each row and extract specified columns
-        for row in reader:
-            extracted_row = [row[col] for col in columns if col in row]
-            extracted_data.append(extracted_row)
-    
-    return extracted_data
+def read_messages(filepath: str) -> List[dict]:
+    """Reads all complaints from the CSV file."""
+    try:
+        with open(filepath, newline='', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            # Get the actual column names from the CSV
+            fieldnames = reader.fieldnames
+            
+            # Define possible mappings for column names
+            column_mappings = {
+                'id': ['DialogID', 'Dialog_ID', 'ID', 'Id'],
+                'complaint': ['CustomerComplaintDialog', 'Customer_Complaint_Dialog', 'Complaint', 'Dialog'],
+                'created': ['Date&TimeCreated', 'DateTimeCreated', 'Created', 'StartTime'],
+                'ended': ['Date&TimeEnded', 'DateTimeEnded', 'Ended', 'EndTime']
+            }
+            
+            # Find the actual column names in the CSV
+            actual_columns = {}
+            for key, possible_names in column_mappings.items():
+                found_column = next((col for col in possible_names if col in fieldnames), None)
+                if not found_column:
+                    raise ValueError(f"Could not find a matching column for {key} in the CSV file")
+                actual_columns[key] = found_column
+            
+            messages = []
+            for row in reader:
+                try:
+                    message = {
+                        "id": row[actual_columns['id']],
+                        "Customer Complaint Dialog": row[actual_columns['complaint']],
+                        "Date & Time Created": row[actual_columns['created']],
+                        "Date & Time Ended": row[actual_columns['ended']],
+                        "original_complaint": row[actual_columns['complaint']]
+                    }
+                    messages.append(message)
+                except KeyError as e:
+                    print(f"Warning: Skipping row due to missing data: {e}")
+                    continue
+                
+        if not messages:
+            raise ValueError("No valid messages were read from the CSV file")
+            
+        return messages
+    except Exception as e:
+        print(f"Error reading CSV file: {e}")
+        # Return an empty list instead of None to prevent further errors
+        return []
 
 def match_categories(summaries, categories):
     result = []
-    for i, elem in enumerate(summaries[0]):
-        if elem["id"] == categories[0][i]["id"]:
-            elem["primary_category"] = categories[0][i]["primary_category"]
-            elem["secondary_category"] = categories[0][i]["secondary_category"]
-            elem["tertiary_category"] = categories[0][i]["tertiary_category"]
-            print(i)
+    if not summaries or not categories or not summaries[0] or not categories[0]:
+        return result
+        
+    # Extract the assigned categories from the summarization step
+    for elem in summaries[0]:
+        if isinstance(elem, dict) and "assigned_category" in elem:
+            # The category is already assigned in the summarization step
             result.append(elem)
+        else:
+            # If somehow the category wasn't assigned, add a default
+            elem["assigned_category"] = "Uncategorized"
+            result.append(elem)
+    
     return result
 
 

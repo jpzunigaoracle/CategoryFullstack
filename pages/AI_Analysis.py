@@ -1,138 +1,83 @@
 import streamlit as st
 import pandas as pd
-import json
-from backend.utils import llm_configM
+from backend.utils import llm_configM as llm_config
 from backend.utils.promptsM import SUMMARIZATION
-from langchain_community.chat_models.oci_generative_ai import ChatOCIGenAI
-from langchain_core.messages import HumanMessage, SystemMessage
 import plotly.express as px
+from backend.feedback_wrapperM import FeedbackAgentWrapperM  # This import will now work correctly
 
-# ---------------------------
-# 🔧 Page Setup
-# ---------------------------
-st.set_page_config(page_title="AI Complaint Analysis", layout="wide")
-st.title("📬 Complaint Synthesis Dashboard")
-st.caption("Summarization | Categorization (Max 6 Classes) | Sentiment | Timestamps")
+st.set_page_config(page_title="AI Analysis", layout="wide")
 
-# ---------------------------
-# 📊 Visual Flowchart
-# ---------------------------
-def create_flowchart(active="summarize"):
-    steps = ["load", "summarize", "done"]
-    edges = [("load", "summarize"), ("summarize", "done")]
-    dot = "digraph G {\n"
-    dot += '    graph [fontname="Courier New"];\n'
-
-    for step in steps:
-        color = "gold" if step == active else "paleturquoise"
-        dot += f'    "{step}" [shape=box, style="rounded,filled", fillcolor={color}];\n'
-
-    for s, t in edges:
-        dot += f'    "{s}" -> "{t}" [color=dimgrey, penwidth=1.5];\n'
-    dot += "}"
-    return dot
-
-# ---------------------------
-# 📂 Load Complaints CSV
-# ---------------------------
-@st.cache_data
 def load_complaints():
-    df = pd.read_csv("backend/data/Complains List.csv")
+    df = pd.read_csv("backend/data/ComplainsList.csv")
     return df
 
-df = load_complaints()
+def process_complaints(complaints_df):
+    # Initialize the FeedbackAgentM wrapper
+    agent = FeedbackAgentWrapperM()  # Changed to M version
+    
+    # Process the complaints step by step
+    step_outputs = {}
+    current_step = None
+    
+    while current_step != "FINALIZED":
+        next_step, output = agent.run_step_by_step()
+        if output:
+            step_outputs[next_step] = output
+        current_step = next_step
+    
+    # Extract the processed results
+    if 'messages_info' in step_outputs:
+        results = step_outputs['messages_info'][0]
+        
+        # Update the DataFrame with AI analysis results
+        complaints_df['assigned_category'] = [item.get('assigned_category', '') for item in results]
+        complaints_df['summary'] = [item.get('summary', '') for item in results]
+        complaints_df['sentiment_score'] = [item.get('sentiment_score', 0) for item in results]
+    
+    return complaints_df
 
-# Show initial preview
-st.subheader("📄 Raw Input Data")
-st.dataframe(df[["Customer Complaint Dialog", "Date & Time Created", "Date & Time Ended"]], use_container_width=True)
+def display_complaints_with_categories(data):
+    st.subheader("📋 Customer Complaints with AI Classifications")
+    
+    # Add debug information
+    print("Data columns:", data.columns.tolist())
+    print("Data shape:", data.shape)
+    
+    # Create a DataFrame with complaints and their classifications
+    df_display = pd.DataFrame({
+        'Customer Complaint Dialog': data['CustomerComplaintDialog'],  # Fixed column name
+        'AI Category': data['assigned_category'] if 'assigned_category' in data else '',
+        'Summary': data['summary'] if 'summary' in data else '',
+        'Sentiment Score': data['sentiment_score'] if 'sentiment_score' in data else '',
+        'Date & Time Created': data['Date&TimeCreated'],  # Fixed column name
+        'Date & Time Ended': data['Date&TimeEnded']  # Fixed column name
+    })
+    
+    # Display the DataFrame
+    st.dataframe(df_display)
+    
+    # Display category statistics if categories exist
+    if 'AI Category' in df_display.columns and df_display['AI Category'].any():
+        st.subheader("📊 Category Distribution")
+        category_counts = df_display['AI Category'].value_counts()
+        fig = px.pie(values=category_counts.values, names=category_counts.index, 
+                     title="Distribution of Complaints Across Categories")
+        st.plotly_chart(fig)
 
-# ---------------------------
-# 🤖 Load LLM from config
-# ---------------------------
-model_cfg = llm_configM.MODEL_REGISTRY["cohere_oci"]
-model = ChatOCIGenAI(
-    model_id=model_cfg["model_id"],
-    service_endpoint=model_cfg["service_endpoint"],
-    compartment_id=model_cfg["compartment_id"],
-    provider=model_cfg["provider"],
-    auth_type=model_cfg["auth_type"],
-    auth_profile=model_cfg["auth_profile"],
-    model_kwargs=model_cfg["model_kwargs"],
-)
+def main():
+    st.title("🤖 AI Complaint Analysis Dashboard")
+    
+    # Load complaints
+    complaints_df = load_complaints()
+    
+    if st.button("Start AI Analysis"):
+        with st.spinner("Analyzing complaints..."):
+            # Process complaints through AI analysis
+            processed_df = process_complaints(complaints_df)
+            st.success("Analysis complete!")
+            
+            # Display results
+            display_complaints_with_categories(processed_df)
 
-# ---------------------------
-# 🔍 Run LLM Summarization
-# ---------------------------
-def summarize_all_messages(df):
-    messages = []
-    for i, row in df.iterrows():
-        messages.append({
-            "id": f"msg_{i+1:03}",
-            "Date & Time Created": row["Date & Time Created"],
-            "Date & Time Ended": row["Date & Time Ended"],
-            "message": row["Customer Complaint Dialog"]
-        })
-
-    user_prompt = f"Analyze the following csv file of user complain messages:\n{json.dumps(messages, indent=2)}"
-
-    response = model.invoke([
-        SystemMessage(content=SUMMARIZATION),
-        HumanMessage(content=user_prompt)
-    ])
-
-    try:
-        output_json = json.loads(response.content)
-        return output_json
-    except Exception as e:
-        st.error("⚠️ Failed to parse model output. Check format.")
-        st.code(response.content)
-        return None
-
-# ---------------------------
-# 🚀 Main Logic
-# ---------------------------
-if "flow_completed" not in st.session_state:
-    st.session_state.flow_completed = True
-
-if st.sidebar.button("Start AI Analysis", disabled=not st.session_state.flow_completed):
-    col1, _ = st.columns([0.4, 0.6])
-    st.session_state.flow_completed = False
-
-    with col1:
-        st.subheader("📍 Analysis Flow")
-        st.graphviz_chart(create_flowchart("summarize"))
-
-    st.divider()
-    st.info("⏳ Summarizing complaints and categorizing into 6 types...")
-
-    with st.spinner("Running LLM summarization..."):
-        result = summarize_all_messages(df)
-
-    if result:
-        output_df = pd.DataFrame(result)
-        output_df["sentiment_score"] = output_df["sentiment_score"].astype(int)
-
-        st.success("✅ Summarization complete!")
-        st.subheader("📊 Synthesized Complaints Table")
-        st.dataframe(output_df, use_container_width=True)
-
-        # Count unique categories
-        category_counts = output_df["complain category"].value_counts()
-        st.markdown("### 📂 Complaint Category Distribution (Max 6)")
-        st.write(f"**Found {len(category_counts)} unique categories**")
-
-        fig = px.bar(
-            category_counts.reset_index(),
-            x="index",
-            y="complain category",
-            labels={"index": "Category", "complain category": "Count"},
-            title="Complaint Frequency by Category",
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-        # Download option
-        csv = output_df.to_csv(index=False).encode("utf-8")
-        st.download_button("⬇️ Download CSV", csv, file_name="complaint_synthesis.csv", mime="text/csv")
-
-    else:
-        st.error("⚠️ No results returned.")
+if __name__ == "__main__":
+    main()

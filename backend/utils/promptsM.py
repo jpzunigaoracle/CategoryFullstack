@@ -1,88 +1,54 @@
 # MESSAGE SUMMARIZATION
-# SUMMARIZATION = """\
-# Analyze the following user message. Identify the main topic, provide a concise summary, and assess the sentiment on a scale from 1 (negative) to 10 (positive). Return your analysis in valid JSON format with the following fields: "main_topic", "summary", and "sentiment_score".
-
-# **Provide your analysis in this exact JSON format:**
-# {
-#   "topic": "The primary subject matter of the message",
-#   "summary": "A concise 1-2 sentence summary of the key points",
-#   "sentiment_score": X
-# }
-
-# **Before finalizing your response:**
-# 1. Ensure you've accurately identified the central topic
-# 2. Verify your summary captures the essential information
-# 3. Confirm your sentiment score reflects the emotional tone (1=extremely negative, 10=extremely positive)
-# 4. Check that your output is valid, parseable JSON\
-# """
 SUMMARIZATION = """\
-Analyze the following csv file of user complain messages. For each Customer Complaint Dialog, identify the complain category with max three words , provide a concise summary, and assess the sentiment on a scale from 1 (negative) to 10 (positive). 
-Return your analysis as an array of JSON objects, with each object containing the message ID and the following fields: "Date & Time Created", "Date & Time Ended", "complain category", "summary", and "sentiment_score".
+You are an expert complaint analyzer. Your task is to:
+1. First read and analyze ALL customer complaint dialogs
+2. Based on the analysis, create EXACTLY 6 distinct categories that best represent the common themes across ALL complaints
+3. Then classify each complaint into one of these 6 categories you created
+4. Provide a detailed analysis in JSON format
 
-**Provide your analysis in this exact JSON format:**
+Step 1: First analyze ALL complaints and identify the 6 most representative categories. Do not proceed to Step 2 until you have analyzed all complaints and created the categories.
+
+Step 2: For each complaint, provide analysis in this exact JSON format:
 [
   {
-    "id": "msg_001",
-    "Date & Time Created" : "just copy the "Date & Time Created" from the first message",
-    "Date & Time Ended" : "just copy the "Date & Time Ended" from the first message",
-    "complain category": "The main subject matter of the first message. Use max three words",
-    "summary": "A concise 1 sentence summary of the key points",
-    "sentiment_score": X
-  },
-  {
-    "id": "msg_002",
-    "Date & Time Created" : "just copy the "Date & Time Created" from the second message",
-    "Date & Time Ended" : "just copy the "Date & Time Ended" from the second message",
-    "complain category": "The main subject matter of the second message. Use max three words",
-    "summary": "A concise 1 sentence summary of the key points",
-    "sentiment_score": X
-  },
-  {
-    "id": "msg_003",
-    "Date & Time Created" : "just copy the "Date & Time Created" from the third message",
-    "Date & Time Ended" : "just copy the "Date & Time Ended" from the third message",
-    "complain category": "The main subject matter of the third message. Use max three words",
+    "id": "Dialog ID from the CSV",
+    "Date & Time Created": "Date & Time Created from CSV",
+    "Date & Time Ended": "Date & Time Ended from CSV",
+    "original_complaint": "The full Customer Complaint Dialog",
+    "assigned_category": "One of your 6 auto-generated categories",
     "summary": "A concise 1 sentence summary of the key points",
     "sentiment_score": X
   }
 ]
 
 **Before finalizing your response:**
-1. Ensure you've accurately identified the central complain category for each message
-2. Verify your summaries capture the essential information in 1 sentence
-3. Confirm your sentiment scores reflect the emotional tone (1=extremely negative, 10=extremely positive)
-4. Check that your output is valid, parseable JSON
-5. Make sure each message ID in your response matches the corresponding message ID from the input
+1. Verify that you created EXACTLY 6 distinct categories based on analyzing ALL complaints
+2. Ensure each complaint is assigned to exactly one of your 6 categories
+3. Verify summaries capture the essential information in 1 sentence
+4. Confirm sentiment scores reflect the emotional tone (1=extremely negative, 10=extremely positive)
+5. Check that your output is valid, parseable JSON
 \
 """
 
 CATEGORIZATION_SYSTEM = """\
-You are an expert content analyzer that categorizes user messages into a hierarchical taxonomy. You process batches of message summaries, each with a unique ID, and classify them into a 3-level nested category structure. Your categorization must follow a consistent taxonomy with increasing specificity at each level.
+You are an expert content analyzer that categorizes user messages into a hierarchical taxonomy. You process batches of message summaries, each with a unique ID, and classify them into a 2-level nested category structure.
 
 IMPORTANT CONSTRAINTS:
-- Use no more than 6 complain category
-- Use no more than 3 secondary categories per primary category
-
+- Use EXACTLY 6 primary categories (these should match the categories created in the summarization step)
+- Use 2-3 secondary categories per primary category to provide more detail
 - Maintain consistent naming and logical hierarchical relationships
-- Reuse existing categories instead of creating new ones whenever possible
 
-Analyze the following batch of message summaries and categorize each one into this constrained 3-level hierarchical taxonomy:
+Analyze the following batch of message summaries and categorize each one into this constrained 2-level hierarchical taxonomy:
 
-1. Primary category: Broadest level (e.g., "Human Resources", "Finance", "IT")
-2. Secondary category: More specific domain within the primary category (e.g., "Policies", "Benefits", "Recruitment")
+1. Primary category: Must be one of the 6 main categories identified earlier
+2. Secondary category: More specific domain within the primary category
 
-
-Ensure that each level builds upon the previous level with increasing specificity and follows logical parent-child relationships.
-
-Return your analysis as a JSON array with each element containing "id", "primary_category", "secondary_category", and "tertiary_category".
+Return your analysis as a JSON array with each element containing "id", "primary_category", and "secondary_category".
 
 **Example of expected categorization structure:**
-- Primary: "Human Resources"
-  - Secondary: "Policies"
-    - Tertiary: "Leaves"
-  - Secondary: "Benefits"
-    - Tertiary: "Health Insurance"
-
+- Primary: "Product Quality"
+  - Secondary: "Manufacturing Defects"
+  - Secondary: "Material Issues"
 \
 """
 

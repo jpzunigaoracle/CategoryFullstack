@@ -1,4 +1,4 @@
-﻿Dialog ID,Date Created,Date & Time Created,Date Ended,Date & Time Ended,Customer Complaint Dialog
+﻿DialogID,DateCreated,Date&TimeCreated,DateEnded,Date&TimeEnded,CustomerComplaintDialog
 1,1/10/2023,9:32 AM,1/10/2023,9:45 AM,"C: My fridge (Model: SFS200) is not cooling properly. It's still under warranty. Can I get a technician to fix this? <br> Agent: Absolutely, we can arrange a repair. Please share your purchase details..."
 2,2/5/2023,2:15 PM,2/5/2023,2:30 PM,"C: I ordered a dishwasher online, but it hasn't been delivered yet. Order ID: SMD1234. Can you check its status? <br> A: Apologies for the delay. Let me track your order..."
 3,12/15/2022,11:05 AM,12/15/2022,11:20 AM,C: My oven's display is glitching. Is this something I can fix myself? <br> A: We can guide you through some troubleshooting steps. Please provide the model number...
