@@ -12,6 +12,7 @@ sys.path.append(current_dir)
 # Import from local utils directory
 try:
     from utils.llm_configM import MODEL_REGISTRY, get_prompt
+    from utils.jsonbin_api import fetch_complaints
 except ImportError as e:
     print(f"Import error: {e}")
     # Fallback definitions if import fails
@@ -51,17 +52,31 @@ Return your analysis in this EXACT JSON format:
 ]"""
         return ""
 
-def generate_report():
+def generate_report(file_path=None):
     """
     Generate a report of analyzed complaints with sentiment scores using OCI AI.
     Returns data in the specified format.
+    
+    Args:
+        file_path (str, optional): Path to a custom complaints JSON file. 
+                                  If None, uses default sources.
     """
     try:
-        # Read complaints from JSON file
-        complaints_path = os.path.join(os.path.dirname(__file__), 'ComplainsList.json')
-        
-        with open(complaints_path, 'r', encoding='utf-8') as f:
-            complaints = json.load(f)
+        # Try to use the provided file path first
+        if file_path and os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                complaints = json.load(f)
+        else:
+            # Otherwise, try JSONBin.io first, then fall back to local file
+            try:
+                complaints = fetch_complaints()
+            except Exception as e:
+                print(f"Error fetching from JSONBin.io: {str(e)}", file=sys.stderr)
+                print("Falling back to local file...", file=sys.stderr)
+                # Fallback to local file if JSONBin.io fails
+                complaints_path = os.path.join(os.path.dirname(__file__), 'ComplainsList.json')
+                with open(complaints_path, 'r', encoding='utf-8') as f:
+                    complaints = json.load(f)
         
         # Format complaints for the AI model
         formatted_complaints = format_complaints_for_ai(complaints)
@@ -238,9 +253,22 @@ def fallback_analysis(complaints_data):
     return complaints
 
 if __name__ == "__main__":
-    # Generate the report
-    report = generate_report()
+    import argparse
     
-    # Print the report as JSON
-    print(json.dumps(report))
+    # Set up argument parser
+    parser = argparse.ArgumentParser(description='Analyze customer complaints for sentiment')
+    parser.add_argument('--text', help='Text to analyze')
+    parser.add_argument('--model_name', default='cohere_oci', help='Model name to use')
+    parser.add_argument('--file', help='Path to a custom complaints JSON file')
+    
+    args = parser.parse_args()
+    
+    if args.text:
+        # If text is provided, analyze it directly
+        # (This is for the existing analyze_sentiment.js functionality)
+        pass
+    else:
+        # Generate report from complaints data
+        result = generate_report(args.file)
+        print(json.dumps(result))
   
