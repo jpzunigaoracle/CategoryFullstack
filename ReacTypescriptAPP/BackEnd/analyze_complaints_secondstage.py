@@ -79,15 +79,8 @@ def classify_complaints():
             # Classify the complaints
             classified_data = classify_with_oci_ai(complaints)
             
-            # Format the response to match the first stage structure
-            response = {
-                "generate_report": {
-                    "reports": [classified_data["classified_complaints"]],
-                    "categories": classified_data["categories"]
-                }
-            }
-            
-            return response
+            # Return the classified data directly to match the expected format
+            return classified_data
             
         except Exception as e:
             print(f"Error fetching first stage data: {str(e)}", file=sys.stderr)

@@ -133,7 +133,7 @@ def analyze_with_oci_ai(complaints_data):
     api_key = os.environ.get('OCI_API_KEY')
     if not api_key:
         print("Warning: OCI_API_KEY environment variable not set. Using fallback analysis.", file=sys.stderr)
-        return fallback_analysis(complaints_text)
+        return fallback_analysis(complaints_data)
     
     # Prepare the API request
     headers = {
@@ -166,27 +166,36 @@ def analyze_with_oci_ai(complaints_data):
                 analyzed_complaints = json.loads(ai_response)
                 
                 # Ensure all IDs are integers to match the expected format
-                for complaint in analyzed_complaints:
+                for i, complaint in enumerate(analyzed_complaints):
                     if "id" in complaint and isinstance(complaint["id"], str):
                         try:
                             complaint["id"] = int(complaint["id"])
                         except ValueError:
                             # Keep as string if conversion fails
                             pass
+                    
+                    # Add the original dialog from the original complaints data
+                    complaint_id = complaint.get("id")
+                    # Find the matching original complaint
+                    for orig_complaint in original_complaints:
+                        if str(orig_complaint.get("DialogID")) == str(complaint_id) or i < len(original_complaints):
+                            # Add the original dialog to the analyzed complaint
+                            complaint["original_dialog"] = orig_complaint.get("CustomerComplaintDialog", "")
+                            break
                 
                 return analyzed_complaints
             except json.JSONDecodeError as e:
                 print(f"Error parsing AI response: {e}", file=sys.stderr)
                 print(f"Raw AI response: {ai_response}", file=sys.stderr)
-                return fallback_analysis(complaints_text)
+                return fallback_analysis(complaints_data)
         else:
             print(f"API Error: {response.status_code} - {response.text}", file=sys.stderr)
             # Fallback to simple analysis if API fails
-            return fallback_analysis(complaints_text)
+            return fallback_analysis(complaints_data)
     except Exception as e:
         print(f"Error calling OCI AI: {str(e)}", file=sys.stderr)
         # Fallback to simple analysis if API fails
-        return fallback_analysis(complaints_text)
+        return fallback_analysis(complaints_data)
 
 def fallback_analysis(complaints_data):
     """Fallback method if the API call fails"""
@@ -243,7 +252,7 @@ def fallback_analysis(complaints_data):
         # Add the original dialog
         original_dialog = ""
         if i < len(original_complaints):
-            original_dialog = original_complaints[i]["CustomerComplaintDialog"]
+            original_dialog = original_complaints[i].get("CustomerComplaintDialog", "")
         
         complaints.append({
             "id": complaint_id_int,
