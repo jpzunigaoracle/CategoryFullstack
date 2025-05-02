@@ -279,6 +279,53 @@ app.post('/api/upload/analyze-complaints', upload.single('complaintsFile'), (req
   }
 });
 
+// New endpoint to classify complaints into categories
+app.get('/api/analyze-complaints/classtype', (req, res) => {
+  const pythonScriptPath = path.join(__dirname, 'analyze_complaints_secondstage.py');
+  
+  // Check if the Python script exists
+  if (!fs.existsSync(pythonScriptPath)) {
+    return res.status(404).json({ error: 'Classification script not found' });
+  }
+  
+  // Create options for Python script
+  const options = {
+    mode: 'text',
+    pythonPath: 'python', // or 'python3' depending on your environment
+    pythonOptions: ['-u'], // unbuffered output
+    scriptPath: path.dirname(pythonScriptPath),
+    args: []
+  };
+  
+  // Run the Python script with improved error handling
+  PythonShell.run('analyze_complaints_secondstage.py', options)
+    .then(results => {
+      try {
+        // The last line of output should be our JSON result
+        const jsonOutput = results[results.length - 1];
+        const analysisResults = JSON.parse(jsonOutput);
+        
+        // Return the exact format needed
+        res.json(analysisResults);
+      } catch (error) {
+        console.error('Error parsing Python script output:', error);
+        console.error('Python output:', results);
+        res.status(500).json({ 
+          error: 'Failed to parse classification results',
+          details: error.message,
+          output: results
+        });
+      }
+    })
+    .catch(err => {
+      console.error('Error running Python script:', err);
+      res.status(500).json({ 
+        error: 'Failed to classify complaints',
+        details: err.message
+      });
+    });
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

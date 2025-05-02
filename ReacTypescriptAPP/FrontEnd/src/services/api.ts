@@ -33,8 +33,9 @@ export const fetchComplaintData = async (): Promise<SentimentResult[]> => {
     
     if (response.data && Array.isArray(response.data)) {
       return response.data;
-    } else if (response.data && response.data.reports && Array.isArray(response.data.reports)) {
-      return response.data.reports;
+    } else if (response.data && response.data.generate_report && response.data.generate_report.reports && Array.isArray(response.data.generate_report.reports[0])) {
+      // Handle the specific format from the endpoint
+      return response.data.generate_report.reports[0];
     } else {
       throw new Error('Invalid response format from API');
     }

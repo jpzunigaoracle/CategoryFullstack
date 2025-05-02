@@ -32,24 +32,30 @@ except ImportError as e:
         if prompt_type == "summarization":
             return """You are an expert complaint analyzer. Your task is to:
 
-1. Read each customer complaint dialog provided in the input
-2. For EACH complaint, create a short summary (1-2 sentences)
-3. For EACH complaint, assign a sentiment score from 1-10 (1=very negative, 10=very positive)
-4. Include the date and time created and date and time ended for each complaint
-
-Return your analysis in this EXACT JSON format:
-[
-  {
-    "id": "1",
-    "summary": "Customer's fridge is not cooling properly and needs warranty service.",
-    "sentiment_score": 3,
-    "date_created": "2023-01-10",
-    "time_created": "9:30 AM",
-    "date_ended": "2023-01-10",
-    "time_ended": "9:45 AM"
-  },
-  ... and so on for each complaint
-]"""
+    1. Read each customer complaint dialog provided in the input
+    2. For EACH complaint, create a short summary (1-2 sentences)
+    3. For EACH complaint, assign a sentiment score from 1-10 where:
+       - 1-3: Very negative (customer is angry, frustrated, or disappointed)
+       - 4-5: Somewhat negative (customer has concerns or mild frustration)
+       - 6-7: Neutral to slightly positive (customer is calm or satisfied with resolution)
+       - 8-10: Very positive (customer is happy, grateful, or impressed)
+    4. Include the date and time created and date and time ended for each complaint
+    
+    IMPORTANT: Do NOT default to a neutral score of 5. Analyze the actual sentiment in the dialog.
+    
+    Return your analysis in this EXACT JSON format:
+    [
+      {
+        "id": "1",
+        "summary": "Customer's fridge is not cooling properly and needs warranty service.",
+        "sentiment_score": 3,
+        "date_created": "2023-01-10",
+        "time_created": "9:30 AM",
+        "date_ended": "2023-01-10",
+        "time_ended": "9:45 AM"
+      },
+      ... and so on for each complaint
+    ]"""
         return ""
 
 def generate_report(file_path=None):
@@ -225,8 +231,8 @@ def fallback_analysis(complaints_data):
             customer_part = customer_part[3:]
         summary = customer_part.split('.')[0] + "."
         
-        # Simple sentiment score (neutral by default)
-        sentiment_score = 5
+        # Calculate sentiment score based on dialog content
+        sentiment_score = calculate_sentiment(dialog_text)
         
         # Try to convert complaint_id to integer
         try:
@@ -251,6 +257,53 @@ def fallback_analysis(complaints_data):
         })
     
     return complaints
+
+def calculate_sentiment(text):
+    """Calculate a sentiment score from 1-10 based on the dialog content"""
+    if not text:
+        return 5  # Default for empty text
+    
+    text = text.lower()
+    
+    # Simple sentiment analysis based on keywords
+    negative_words = [
+        "broken", "defect", "terrible", "worst", "angry", "furious", 
+        "disappointed", "horrible", "awful", "unacceptable", "ridiculous", 
+        "waste", "useless", "not working", "issue", "problem", "poor", 
+        "complaint", "error", "fail", "bad", "wrong", "unhappy", "delay"
+    ]
+    
+    positive_words = [
+        "good", "nice", "helpful", "resolved", "solution", "fixed", "working", 
+        "better", "improved", "satisfied", "thank", "appreciate", "pleased", 
+        "happy", "excellent", "amazing", "outstanding", "fantastic", 
+        "wonderful", "great", "perfect", "love", "best"
+    ]
+    
+    # Count occurrences
+    negative_count = sum(1 for word in negative_words if word in text)
+    positive_count = sum(1 for word in positive_words if word in text)
+    
+    # Calculate sentiment score
+    if negative_count == 0 and positive_count == 0:
+        # No sentiment words found, analyze other factors
+        if "?" in text:
+            return 6  # Questions tend to be neutral to slightly positive
+        elif "!" in text:
+            return 4  # Exclamations might indicate some frustration
+        else:
+            # Use text length to vary the score
+            return 4 + (len(text) % 3)  # Will give 4, 5, or 6
+    
+    # Calculate ratio of positive to total sentiment words
+    total_sentiment_words = negative_count + positive_count
+    if total_sentiment_words > 0:
+        positive_ratio = positive_count / total_sentiment_words
+        # Scale to 1-10 range
+        score = 1 + int(positive_ratio * 9)
+        return score
+    
+    return 5  # Default fallback
 
 if __name__ == "__main__":
     import argparse
