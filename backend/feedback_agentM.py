@@ -18,7 +18,6 @@ logging.getLogger("oci").setLevel(logging.DEBUG)
 
 class AgentState(BaseModel):
     messages_info: List = []
-    categories: List = []
     reports: List = []
 
 
@@ -29,7 +28,7 @@ class FeedbackAgent:
         self.memory = MemorySaver()
         self.builder = self.setup_graph()
         self.messages = handler.read_messages(
-            filepath="backend/data/ComplainsList.csv"  # Changed from complaints_messages.csv to ComplainsList.csv
+            filepath="backend/data/ComplainsList.json"
         )
         self.categ_with_embedding = categ_with_embedding
 
@@ -75,56 +74,29 @@ class FeedbackAgent:
                 HumanMessage(content=f"Message batch: {self.messages}"),
             ]
         )
-        state.messages_info = [json.loads(response.content)]
+        try:
+            state.messages_info = [json.loads(response.content)]
+            print(f"Parsed messages_info: {state.messages_info}")
+        except json.JSONDecodeError as e:
+            print(f"Error parsing JSON response: {e}")
+            print(f"Raw response: {response.content}")
+            state.messages_info = [{"error": "Failed to parse LLM response"}]
         return {"messages_info": state.messages_info}
 
-    def categorization_node(self, state: AgentState):
-        if self.categ_with_embedding:
-            pass
-        else:
-            response = self.model.invoke(
-                [
-                    SystemMessage(
-                        content=llm_config.get_prompt(
-                            self.model_name, "CATEGORIZATION_SYSTEM"
-                        )
-                    ),
-                    HumanMessage(
-                        content=llm_config.get_prompt(
-                            self.model_name, "CATEGORIZATION_USER"
-                        ).format(MESSAGE_BATCH=state.messages_info)
-                    ),
-                ]
-            )
-            content = [json.loads(response.content)]
-            state.categories = handler.match_categories(state.messages_info, content)
-            print(state.categories)
-        return {"categories": state.categories}
-
     def generate_report_node(self, state: AgentState):
-        response = self.model.invoke(
-            [
-                SystemMessage(
-                    content=llm_config.get_prompt(self.model_name, "REPORT_GEN")
-                ),
-                HumanMessage(content=f"Message info: {state.categories}"),
-            ]
-        )
-        state.reports = response.content
-        return {"reports": [response.content]}
-        
+        # Simply pass through the summarization results
+        state.reports = state.messages_info
+        return {"reports": state.messages_info}
 
     def setup_graph(self):
         builder = StateGraph(AgentState)
         builder.add_node("summarize", self.summarization_node)
-        builder.add_node("categorize", self.categorization_node)
         builder.add_node("generate_report", self.generate_report_node)
 
         builder.set_entry_point("summarize")
-        builder.add_edge("summarize", "categorize")
-        builder.add_edge("categorize", "generate_report")
-
+        builder.add_edge("summarize", "generate_report")
         builder.add_edge("generate_report", END)
+        
         return builder.compile(checkpointer=self.memory)
 
     def get_graph(self):
@@ -145,7 +117,6 @@ class FeedbackAgent:
         # Step-by-step execution
         initial_state = {
             "messages_info": [],
-            "categories": [],
             "reports":  [],
         }
 
@@ -156,101 +127,13 @@ class FeedbackAgent:
 
 # Constants
 
-query_schema = {
-    "title": "Queries",
-    "description": "A list of search queries to gather information for research",
-    "type": "object",
-    "properties": {"queries": {"type": "array", "items": {"type": "string"}}},
-    "required": ["queries"],
-}
-
 summarization_schema = {
     "title": "Summary",
     "description": "Message info",
     "type": "object",
     "properties": {
-        "topic": {"type": "string"},
-        "sentiment_score": {"type": "string"},
         "summary": {"type": "string"},
+        "sentiment_score": {"type": "string"},
     },
-    "required": ["topic", "sentiment_score", "summary"],
-}
-
-categories_schema = {
-    "title": "Categories",
-    "description": "Hierarchical categorization of message summaries",
-    "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "id": {
-                "type": "string",
-                "description": "Unique identifier for the message",
-            },
-            "primary_category": {
-                "type": "string",
-                "description": "Broadest level category",
-            },
-            "secondary_category": {
-                "type": "string",
-                "description": "More specific domain within the primary category",
-            },
-            "tertiary_category": {
-                "type": "string",
-                "description": "Most specific classification within the secondary category",
-            },
-        },
-        "required": [
-            "id",
-            "primary_category",
-            "secondary_category",
-            "tertiary_category",
-        ],
-    },
-}
-
-batch_categ_schema = {
-    "title": "Queries",
-    "description": "A list of search queries to gather information for research",
-    "type": "object",
-    "properties": {
-        "queries": {
-            "type": "array",
-            "items": {
-                "type": {
-                    "title": "Categories",
-                    "description": "Hierarchical categorization of message summaries",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "string",
-                                "description": "Unique identifier for the message",
-                            },
-                            "primary_category": {
-                                "type": "string",
-                                "description": "Broadest level category",
-                            },
-                            "secondary_category": {
-                                "type": "string",
-                                "description": "More specific domain within the primary category",
-                            },
-                            "tertiary_category": {
-                                "type": "string",
-                                "description": "Most specific classification within the secondary category",
-                            },
-                        },
-                        "required": [
-                            "id",
-                            "primary_category",
-                            "secondary_category",
-                            "tertiary_category",
-                        ],
-                    },
-                }
-            },
-        }
-    },
-    "required": ["queries"],
+    "required": ["summary", "sentiment_score"],
 }

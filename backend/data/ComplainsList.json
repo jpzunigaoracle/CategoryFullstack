@@ -1,0 +1,242 @@
+[
+  {
+    "DialogID": 1,
+    "DateCreated": "2023-01-10",
+    "Date&TimeCreated": "9:32 AM",
+    "DateEnded": "2023-01-10",
+    "Date&TimeEnded": "9:45 AM",
+    "CustomerComplaintDialog": "C: My fridge (Model: SFS200) is not cooling properly. It's still under warranty. Can I get a technician to fix this? <br> Agent: Absolutely, we can arrange a repair. Please share your purchase details..."
+  },
+  {
+    "DialogID": 2,
+    "DateCreated": "2023-02-05",
+    "Date&TimeCreated": "2:15 PM",
+    "DateEnded": "2023-02-05",
+    "Date&TimeEnded": "2:30 PM",
+    "CustomerComplaintDialog": "C: I ordered a dishwasher online, but it hasn't been delivered yet. Order ID: SMD1234. Can you check its status? <br> A: Apologies for the delay. Let me track your order..."
+  },
+  {
+    "DialogID": 3,
+    "DateCreated": "2022-12-15",
+    "Date&TimeCreated": "11:05 AM",
+    "DateEnded": "2022-12-15",
+    "Date&TimeEnded": "11:20 AM",
+    "CustomerComplaintDialog": "C: My oven's display is glitching. Is this something I can fix myself? <br> A: We can guide you through some troubleshooting steps. Please provide the model number..."
+  },
+  {
+    "DialogID": 4,
+    "DateCreated": "2023-03-20",
+    "Date&TimeCreated": "3:30 PM",
+    "DateEnded": "2023-03-20",
+    "Date&TimeEnded": "3:42 PM",
+    "CustomerComplaintDialog": "C: I need to cancel my extended warranty. How do I proceed? <br> A: I'm sorry to hear that. I can assist with the cancellation..."
+  },
+  {
+    "DialogID": 5,
+    "DateCreated": "2023-08-08",
+    "Date&TimeCreated": "6:10 PM",
+    "DateEnded": "2023-08-08",
+    "Date&TimeEnded": "6:25 PM",
+    "CustomerComplaintDialog": "C: The stove's burners are not igniting. It's a safety concern! <br> A: We take such issues very seriously. Kindly provide the stove's model and age..."
+  },
+  {
+    "DialogID": 6,
+    "DateCreated": "2023-07-12",
+    "Date&TimeCreated": "10:45 AM",
+    "DateEnded": "2023-07-12",
+    "Date&TimeEnded": "11:02 AM",
+    "CustomerComplaintDialog": "C: My account was charged twice for the same toaster purchase. Please help! <br> A: Oh dear! We can rectify this. Let's get your account details..."
+  },
+  {
+    "DialogID": 7,
+    "DateCreated": "2022-11-03",
+    "Date&TimeCreated": "2:30 PM",
+    "DateEnded": "2022-11-03",
+    "Date&TimeEnded": "2:48 PM",
+    "CustomerComplaintDialog": "C: I'm interested in a vintage SMEG fridge, but it's not listed on the website anymore. Can I still purchase it? <br> A: Let me connect you with our sales team for assistance..."
+  },
+  {
+    "DialogID": 8,
+    "DateCreated": "2023-05-18",
+    "Date&TimeCreated": "8:00 AM",
+    "DateEnded": "2023-05-18",
+    "Date&TimeEnded": "8:15 AM",
+    "CustomerComplaintDialog": "C: My washing machine is leaking and damaged my floor. What does the warranty cover? <br> A: We'll need to assess the situation. Kindly provide the machine's details..."
+  },
+  {
+    "DialogID": 9,
+    "DateCreated": "2023-09-25",
+    "Date&TimeCreated": "4:35 PM",
+    "DateEnded": "2023-09-25",
+    "Date&TimeEnded": "4:50 PM",
+    "CustomerComplaintDialog": "C: I want to return the blender I bought yesterday. It's too noisy! <br> A: Returns are possible within 30 days. I'll guide you through the process..."
+  },
+  {
+    "DialogID": 10,
+    "DateCreated": "2023-04-11",
+    "Date&TimeCreated": "11:30 AM",
+    "DateEnded": "2023-04-11",
+    "Date&TimeEnded": "11:42 AM",
+    "CustomerComplaintDialog": "C: My coffee machine's app connection is unstable. Any suggestions? <br> A: This might be a known issue. Let's check for a firmware update..."
+  },
+  {
+    "DialogID": 11,
+    "DateCreated": "2023-06-06",
+    "Date&TimeCreated": "3:15 PM",
+    "DateEnded": "2023-06-06",
+    "Date&TimeEnded": "3:35 PM",
+    "CustomerComplaintDialog": "C: The appliance repairman never showed up in the scheduled time. What now? <br> A: Apologies for the inconvenience. I'll contact the technician and reschedule..."
+  },
+  {
+    "DialogID": 12,
+    "DateCreated": "2023-02-22",
+    "Date&TimeCreated": "5:45 PM",
+    "DateEnded": "2023-02-22",
+    "Date&TimeEnded": "6:00 PM",
+    "CustomerComplaintDialog": "C: I'm moving and want to take my SMEG appliances. Can I get help with disconnecting them? <br> A: Certainly! We can arrange a technician visit..."
+  },
+  {
+    "DialogID": 13,
+    "DateCreated": "2023-03-03",
+    "Date&TimeCreated": "2:00 PM",
+    "DateEnded": "2023-03-04",
+    "Date&TimeEnded": "10:30 AM",
+    "CustomerComplaintDialog": "C: I'm considering a kitchen renovation. Do you offer design consultations? <br> A: Yes, we provide expert design advice. Let's schedule a call with our interior designer..."
+  },
+  {
+    "DialogID": 14,
+    "DateCreated": "2023-10-29",
+    "Date&TimeCreated": "8:45 AM",
+    "DateEnded": "2023-10-29",
+    "Date&TimeEnded": "9:02 AM",
+    "CustomerComplaintDialog": "C: My smart fridge is not connecting to my phone. Any troubleshooting tips? <br> A: We have some steps to resolve this. Let's start with checking your WiFi connection..."
+  },
+  {
+    "DialogID": 15,
+    "DateCreated": "2023-01-05",
+    "Date&TimeCreated": "1:15 PM",
+    "DateEnded": "2023-01-05",
+    "Date&TimeEnded": "1:30 PM",
+    "CustomerComplaintDialog": "C: I need to replace my old SMEG dishwasher, but I can't find the same model. <br> A: We can suggest a modern equivalent. What features are you looking for?"
+  },
+  {
+    "DialogID": 16,
+    "DateCreated": "2022-11-18",
+    "Date&TimeCreated": "4:10 PM",
+    "DateEnded": "2022-11-18",
+    "Date&TimeEnded": "4:25 PM",
+    "CustomerComplaintDialog": "C: The oven's door is not closing properly. Is this a common issue? <br> A: This might be a simple fix. Let's troubleshoot together..."
+  },
+  {
+    "DialogID": 17,
+    "DateCreated": "2023-07-25",
+    "Date&TimeCreated": "9:00 AM",
+    "DateEnded": "2023-07-25",
+    "Date&TimeEnded": "9:12 AM",
+    "CustomerComplaintDialog": "C: I'd like to upgrade my warranty, but the website isn't clear on the process. <br> A: I can walk you through the warranty upgrade steps..."
+  },
+  {
+    "DialogID": 18,
+    "DateCreated": "2023-05-02",
+    "Date&TimeCreated": "6:30 PM",
+    "DateEnded": "2023-05-02",
+    "Date&TimeEnded": "6:45 PM",
+    "CustomerComplaintDialog": "C: My cooktop is scratched. Can I claim warranty for this? <br> A: Scratches are usually not covered, but let's check the terms for your specific model..."
+  },
+  {
+    "DialogID": 19,
+    "DateCreated": "2023-08-12",
+    "Date&TimeCreated": "11:45 AM",
+    "DateEnded": "2023-08-12",
+    "Date&TimeEnded": "12:00 PM",
+    "CustomerComplaintDialog": "C: I want to report a damaged package delivery. The toaster box was crushed. <br> A: We apologize for the poor packaging. We'll arrange a replacement..."
+  },
+  {
+    "DialogID": 20,
+    "DateCreated": "2023-12-03",
+    "Date&TimeCreated": "2:05 PM",
+    "DateEnded": "2023-12-03",
+    "Date&TimeEnded": "2:20 PM",
+    "CustomerComplaintDialog": "C: My account login isn't working. I think I forgot my password. <br> A: No worries, we can reset your password. Let's get your email address..."
+  },
+  {
+    "DialogID": 21,
+    "DateCreated": "2023-09-07",
+    "Date&TimeCreated": "5:30 PM",
+    "DateEnded": "2023-09-07",
+    "Date&TimeEnded": "5:42 PM",
+    "CustomerComplaintDialog": "C: The dryer is making a strange noise. Should I be concerned? <br> A: It's best to get it inspected. Kindly provide the dryer's model and age..."
+  },
+  {
+    "DialogID": 22,
+    "DateCreated": "2023-04-25",
+    "Date&TimeCreated": "10:15 AM",
+    "DateEnded": "2023-04-25",
+    "Date&TimeEnded": "10:35 AM",
+    "CustomerComplaintDialog": "C: I need help connecting my new fridge to the water line. <br> A: We can provide a step-by-step guide or arrange a technician for assistance..."
+  },
+  {
+    "DialogID": 23,
+    "DateCreated": "2023-11-05",
+    "Date&TimeCreated": "3:45 PM",
+    "DateEnded": "2023-11-05",
+    "Date&TimeEnded": "4:00 PM",
+    "CustomerComplaintDialog": "C: I think my credit card was charged fraudulently on your website. <br> A: We take fraud seriously. Let's investigate this immediately..."
+  },
+  {
+    "DialogID": 24,
+    "DateCreated": "2023-06-18",
+    "Date&TimeCreated": "8:30 AM",
+    "DateEnded": "2023-06-18",
+    "Date&TimeEnded": "8:45 AM",
+    "CustomerComplaintDialog": "C: My range hood is not extracting smoke properly. Any advice? <br> A: There are a few things we can try. Let's start with checking the filters..."
+  },
+  {
+    "DialogID": 25,
+    "DateCreated": "2023-03-12",
+    "Date&TimeCreated": "5:10 PM",
+    "DateEnded": "2023-03-12",
+    "Date&TimeEnded": "5:25 PM",
+    "CustomerComplaintDialog": "C: I'm interested in a custom-colored fridge. What's the process? <br> A: SMEG offers customization options. Let's discuss your preferences..."
+  },
+  {
+    "DialogID": 26,
+    "DateCreated": "2023-08-28",
+    "Date&TimeCreated": "2:45 PM",
+    "DateEnded": "2023-08-28",
+    "Date&TimeEnded": "3:00 PM",
+    "CustomerComplaintDialog": "C: The appliance delivery was late, and I want to provide feedback. <br> A: We value your feedback. Please share your experience so we can improve..."
+  },
+  {
+    "DialogID": 27,
+    "DateCreated": "2023-12-10",
+    "Date&TimeCreated": "10:05 AM",
+    "DateEnded": "2023-12-10",
+    "Date&TimeEnded": "10:20 AM",
+    "CustomerComplaintDialog": "C: I want to gift a SMEG blender to my friend. Can I get it gift-wrapped? <br> A: Absolutely! We offer gift-wrapping and a personalized note..."
+  },
+  {
+    "DialogID": 28,
+    "DateCreated": "2023-05-30",
+    "Date&TimeCreated": "4:00 PM",
+    "DateEnded": "2023-05-30",
+    "Date&TimeEnded": "4:15 PM",
+    "CustomerComplaintDialog": "C: My fridge's ice maker is not working after a power outage. <br> A: Power surges can affect electronics. Let's try a reset..."
+  },
+  {
+    "DialogID": 29,
+    "DateCreated": "2023-07-03",
+    "Date&TimeCreated": "9:15 AM",
+    "DateEnded": "2023-07-03",
+    "Date&TimeEnded": "9:30 AM",
+    "CustomerComplaintDialog": "C: I need help setting up my new SMEG account. <br> A: I'll be happy to assist. Let's get you set up and explore our digital features..."
+  },
+  {
+    "DialogID": 30,
+    "DateCreated": "2023-11-22",
+    "Date&TimeCreated": "5:45 PM",
+    "DateEnded": "2023-11-22",
+    "Date&TimeEnded": "6:02 PM",
+    "CustomerComplaintDialog": "C: I want to report a defective toaster I purchased last week. <br> A: We apologize for the inconvenience. Let's arrange a replacement or refund..."
+  }
+]

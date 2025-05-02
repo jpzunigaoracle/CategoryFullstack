@@ -1,53 +1,38 @@
 
-import csv
+import json
 from typing import List
 
 
 def read_messages(filepath: str) -> List[dict]:
-    """Reads all complaints from the CSV file."""
+    """Reads all complaints from the JSON file."""
     try:
-        with open(filepath, newline='', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            # Get the actual column names from the CSV
-            fieldnames = reader.fieldnames
-            
-            # Define possible mappings for column names
-            column_mappings = {
-                'id': ['DialogID', 'Dialog_ID', 'ID', 'Id'],
-                'complaint': ['CustomerComplaintDialog', 'Customer_Complaint_Dialog', 'Complaint', 'Dialog'],
-                'created': ['Date&TimeCreated', 'DateTimeCreated', 'Created', 'StartTime'],
-                'ended': ['Date&TimeEnded', 'DateTimeEnded', 'Ended', 'EndTime']
-            }
-            
-            # Find the actual column names in the CSV
-            actual_columns = {}
-            for key, possible_names in column_mappings.items():
-                found_column = next((col for col in possible_names if col in fieldnames), None)
-                if not found_column:
-                    raise ValueError(f"Could not find a matching column for {key} in the CSV file")
-                actual_columns[key] = found_column
+        with open(filepath, encoding='utf-8') as file:
+            data = json.load(file)
             
             messages = []
-            for row in reader:
+            for item in data:
                 try:
+                    # Make sure the ID is being preserved correctly
                     message = {
-                        "id": row[actual_columns['id']],
-                        "Customer Complaint Dialog": row[actual_columns['complaint']],
-                        "Date & Time Created": row[actual_columns['created']],
-                        "Date & Time Ended": row[actual_columns['ended']],
-                        "original_complaint": row[actual_columns['complaint']]
+                        "id": item["DialogID"],  # This should be the original DialogID from the JSON
+                        "Customer Complaint Dialog": item["CustomerComplaintDialog"],
+                        "date_created": item.get("DateCreated", ""),
+                        "time_created": item.get("Date&TimeCreated", ""),
+                        "date_ended": item.get("DateEnded", ""),
+                        "time_ended": item.get("Date&TimeEnded", ""),
+                        "original_complaint": item["CustomerComplaintDialog"]
                     }
                     messages.append(message)
                 except KeyError as e:
-                    print(f"Warning: Skipping row due to missing data: {e}")
+                    print(f"Warning: Skipping item due to missing data: {e}")
                     continue
                 
         if not messages:
-            raise ValueError("No valid messages were read from the CSV file")
+            raise ValueError("No valid messages were read from the JSON file")
             
         return messages
     except Exception as e:
-        print(f"Error reading CSV file: {e}")
+        print(f"Error reading JSON file: {e}")
         # Return an empty list instead of None to prevent further errors
         return []
 

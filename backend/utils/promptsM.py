@@ -1,32 +1,41 @@
 # MESSAGE SUMMARIZATION
 SUMMARIZATION = """\
 You are an expert complaint analyzer. Your task is to:
-1. First read and analyze ALL customer complaint dialogs
-2. Based on the analysis, create EXACTLY 6 distinct categories that best represent the common themes across ALL complaints
-3. Then classify each complaint into one of these 6 categories you created
-4. Provide a detailed analysis in JSON format
 
-Step 1: First analyze ALL complaints and identify the 6 most representative categories. Do not proceed to Step 2 until you have analyzed all complaints and created the categories.
+1. Read each customer complaint dialog provided in the input
+2. For EACH complaint, create a short summary (1-2 sentences)
+3. For EACH complaint, assign a sentiment score from 1-10 (1=very negative, 10=very positive)
+4. Include the date and time created and date and time ended for each complaint
 
-Step 2: For each complaint, provide analysis in this exact JSON format:
+Return your analysis in this EXACT JSON format:
 [
   {
-    "id": "Dialog ID from the CSV",
-    "Date & Time Created": "Date & Time Created from CSV",
-    "Date & Time Ended": "Date & Time Ended from CSV",
-    "original_complaint": "The full Customer Complaint Dialog",
-    "assigned_category": "One of your 6 auto-generated categories",
-    "summary": "A concise 1 sentence summary of the key points",
-    "sentiment_score": X
-  }
+    "id": "1",
+    "summary": "Customer's fridge is not cooling properly and needs warranty service.",
+    "sentiment_score": 3,
+    "date_created": "2023-01-10",
+    "time_created": "9:30 AM",
+    "date_ended": "2023-01-10",
+    "time_ended": "9:45 AM"
+  },
+  {
+    "id": "2",
+    "summary": "Customer's dishwasher hasn't been delivered yet and they want status update.",
+    "sentiment_score": 4,
+    "date_created": "2023-02-05",
+    "time_created": "2:15 PM",
+    "date_ended": "2023-02-05",
+    "time_ended": "2:30 PM"
+  },
+  ... and so on for each complaint
 ]
 
-**Before finalizing your response:**
-1. Verify that you created EXACTLY 6 distinct categories based on analyzing ALL complaints
-2. Ensure each complaint is assigned to exactly one of your 6 categories
-3. Verify summaries capture the essential information in 1 sentence
-4. Confirm sentiment scores reflect the emotional tone (1=extremely negative, 10=extremely positive)
-5. Check that your output is valid, parseable JSON
+IMPORTANT: 
+- Include EVERY complaint from the input
+- Make sure each summary is concise but informative
+- Ensure sentiment scores accurately reflect customer satisfaction
+- Include date_created, time_created, date_ended, and time_ended fields for each complaint
+- Return valid JSON that can be parsed
 \
 """
 
@@ -198,6 +207,8 @@ I've analyzed each message summary and categorized them according to the 3-level
 
 REPORT_GEN_LLAMA = """<|begin_of_text|>
 <|start_header_id|>system<|end_header_id|>
+
+
 
 You are an expert data analyst. Your task is to generate a structured and insightful JSON report analyzing a batch of messages based on their category levels, summaries, and sentiment scores. Each message is classified into three hierarchical category levels (Category Level 1, Category Level 2, and Category Level 3).
 
