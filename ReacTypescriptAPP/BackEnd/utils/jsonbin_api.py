@@ -21,7 +21,8 @@ def fetch_complaints():
     }
     
     try:
-        response = requests.get(url, headers=headers)
+        # Add timeout parameter to prevent hanging indefinitely
+        response = requests.get(url, headers=headers, timeout=10)
         
         if response.status_code == 200:
             # The response contains the JSON data
@@ -29,6 +30,12 @@ def fetch_complaints():
         else:
             print(f"JSONBin.io API Error: {response.status_code} - {response.text}")
             raise Exception(f"Failed to fetch data from JSONBin.io: {response.status_code}")
+    except requests.exceptions.Timeout:
+        print("Request to JSONBin.io timed out. The service might be down or network issues.")
+        raise Exception("Connection to JSONBin.io timed out")
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error to JSONBin.io: {str(e)}")
+        raise Exception(f"Failed to connect to JSONBin.io: {str(e)}")
     except Exception as e:
         print(f"Error fetching data from JSONBin.io: {str(e)}")
         raise
