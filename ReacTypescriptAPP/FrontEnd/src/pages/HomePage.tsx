@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchComplaintData } from '../services/api';
+import axios from 'axios';
+import { fetchComplaintData, fetchSelfClassifiedComplaints } from '../services/api';
 import '../styles/HomePage.css';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSelfClassLoading, setIsSelfClassLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [selfClassError, setSelfClassError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleAnalyzeClick = async () => {
@@ -23,6 +26,30 @@ const HomePage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSelfClassClick = async () => {
+    setIsSelfClassLoading(true);
+    setSelfClassError(null);
+    
+    try {
+      // Get the full response directly
+      const response = await axios.get('http://localhost:5000/api/analyze-complaints/classtype');
+      
+      // Store the entire response
+      localStorage.setItem('selfClassResults', JSON.stringify(response.data));
+      
+      navigate('/selfclass-analysis');
+    } catch (err) {
+      setSelfClassError('Failed to fetch and analyze data. Please try again.');
+      console.error('Error:', err);
+    } finally {
+      setIsSelfClassLoading(false);
+    }
+  };
+
+  const handleVisualizationClick = () => {
+    navigate('/visualization');
   };
 
   return (
@@ -44,9 +71,27 @@ const HomePage: React.FC = () => {
         </div>
         
         <div className="option-card">
+          <h2>AI Self Classification</h2>
+          <p>Let OCI generative AI to classify your costumer complains</p>
+          <button 
+            className="button" 
+            onClick={handleSelfClassClick}
+            disabled={isSelfClassLoading}
+          >
+            {isSelfClassLoading ? 'Analyzing...' : 'Start Analysis'}
+          </button>
+          {selfClassError && <p className="error-message">{selfClassError}</p>}
+        </div>
+        
+        <div className="option-card">
           <h2>Data Visualization</h2>
-          <p>View charts and graphs of customer sentiment trends over time.</p>
-          <button className="button" disabled>Coming Soon</button>
+          <p>View charts and graphs of customer sentiment and costumer complain type trends.</p>
+          <button 
+            className="button" 
+            onClick={handleVisualizationClick}
+          >
+            View Analytics
+          </button>
         </div>
       </div>
     </div>

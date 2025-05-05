@@ -328,8 +328,10 @@ app.get('/api/analyze-complaints/classtype', (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`API endpoints:`);
-  console.log(`- GET /api/complaints: Get raw complaints data`);
-  console.log(`- GET /api/analyze-complaints: Get sentiment analysis report`);
+  // After the server starts and you're printing the endpoints
+  console.log('Server running on port 5000');
+  console.log('API endpoints:');
+  console.log('- GET /api/complaints: Get raw complaints data');
+  console.log('- GET /api/analyze-complaints: Get sentiment analysis report');
+  console.log('- GET /api/analyze-complaints/classtype: Get self classified complaints');
 });
