@@ -1,0 +1,70 @@
+.oci-powered-badge {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px 15px;
+  border-radius: 30px;
+  transition: background-color 0.3s;
+}
+
+.oci-powered-badge:hover {
+  background-color: rgba(248, 0, 0, 0.05);
+}
+
+.oracle-main-logo {
+  height: 32px;
+  margin-right: 10px;
+}
+
+.oci-text-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.powered-by-text {
+  font-size: 12px;
+  color: var(--light-text);
+}
+
+.oci-text {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--oracle-red);
+}
+
+/* Size variations */
+.oci-badge-small .oracle-main-logo {
+  height: 24px;
+}
+
+.oci-badge-small .oci-text {
+  font-size: 12px;
+}
+
+.oci-badge-medium .oracle-main-logo {
+  height: 32px;
+}
+
+.oci-badge-medium .oci-text {
+  font-size: 14px;
+}
+
+.oci-badge-large .oracle-main-logo {
+  height: 40px;
+}
+
+.oci-badge-large .oci-text {
+  font-size: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .oci-powered-badge {
+    padding: 6px 10px;
+  }
+  
+  .oracle-main-logo {
+    height: 28px;
+  }
+}

@@ -391,9 +391,27 @@ const VisualizationPage: React.FC = () => {
     <div className="visualization-container">
       <div className="header">
         <button className="back-button" onClick={handleBackClick}>
-          ← Back to Home
+          Back to Home
         </button>
         <h1>Customer Complaint Analytics</h1>
+        <a 
+          href="https://www.oracle.com/artificial-intelligence/generative-ai/generative-ai-service/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="powered-by"
+        >
+          <span>Powered by</span>
+          <img 
+            src="/oracle-cloud-logo.png" 
+            alt="Oracle Cloud" 
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = 'https://www.oracle.com/a/ocom/img/oracle-cloud-logo.svg';
+            }}
+            className="oracle-logo" 
+          />
+          <span className="generative-ai-text">Generative AI</span>
+        </a>
       </div>
       
       {isLoading ? (

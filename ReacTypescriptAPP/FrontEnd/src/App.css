@@ -1,15 +1,333 @@
+@import './styles/theme.css';
+
+/* Global styles */
+:root {
+  --primary-color: #f80000;
+  --secondary-color: #0a0a0a;
+  --accent-color: #2B3467;
+  --background-color: #f8f9fa;
+  --card-background: #ffffff;
+  --text-color: #333333;
+  --light-text: #666666;
+  --border-radius: 12px;
+  --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --transition-speed: 0.3s;
+  --oracle-red: #f80000;
+  --oracle-blue: #00758f;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
 .App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Shared components */
+.back-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 0;
+  transition: all var(--transition-speed);
+}
+
+.back-button:hover {
+  color: var(--oracle-red);
+}
+
+.back-button::before {
+  content: '←';
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 18px;
+  color: var(--light-text);
+}
+
+.loading::before {
+  content: '';
+  width: 30px;
+  height: 30px;
+  border: 4px solid rgba(0, 117, 143, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--oracle-blue);
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 15px;
+}
+
+.error-message {
+  background-color: rgba(248, 0, 0, 0.1);
+  color: var(--oracle-red);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin: 20px 0;
   text-align: center;
+}
+
+/* Animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .navbar-content {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+  
+  .logo {
+    margin-right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-content {
+    padding: 0 5px;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.navbar {
+  background-color: var(--background);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md) 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  color: var(--on-surface);
+  margin-right: auto;
+}
+
+.logo img {
+  height: 40px;
+  display: block;
+}
+
+/* ChatClassifier Logo Styling */
+.logo-text {
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  color: var(--oracle-blue); /* Changed to blue color for the entire logo text */
+  animation: none; /* Removing any animations */
+  transition: none; /* Removing transitions */
+}
+
+/* OCI Badge Styling */
+.oci-powered {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.oracle-logo {
+  height: 32px;
+  max-width: 100%;
+}
+
+.generative-ai-text {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--oracle-red);
+}
+
+@media (max-width: 768px) {
+  .oci-powered {
+    margin-top: 10px;
+  }
+  
+  .oracle-logo {
+    height: 28px;
+  }
+  
+  .generative-ai-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .oci-powered {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .oracle-logo {
+    height: 24px;
+  }
+}
+
+.oci-link {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.oci-link:hover {
+  opacity: 0.8;
+}
+
+.oci-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.oci-badge-medium .oci-text {
+  font-size: 18px;
+}
+
+.oci-badge-large .oci-text {
+  font-size: 20px;
+}
+
+.logo-text span {
+  color: var(--primary);
+}
+
+.footer {
+  margin-top: auto;
+  padding: var(--spacing-xl) 0;
+  background-color: var(--surface);
+  border-top: 1px solid var(--surface-variant);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-weight: 500;
+  font-size: var(--font-size-md);
+  transition: background-color var(--transition-normal);
+}
+
+.button:hover {
+  background-color: var(--primary-dark);
+}
+
+.button:disabled {
+  background-color: var(--on-surface-light);
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.button-secondary:hover {
+  background-color: rgba(199, 70, 52, 0.05);
+}
+
+.card {
+  background-color: var(--background);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-lg);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.error-message {
+  color: var(--sentiment-negative);
+  background-color: rgba(255, 77, 77, 0.1);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  margin-top: var(--spacing-md);
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+  animation: none; /* Stop the animation */
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: none; /* Override the animation even when user doesn't prefer reduced motion */
+  }
+}
+
+/* We can keep the keyframes definition but we won't use it */
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

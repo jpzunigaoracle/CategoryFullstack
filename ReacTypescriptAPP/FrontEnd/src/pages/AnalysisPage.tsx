@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AnalysisPage.css';
+// Remove the OCIPoweredBadge import
+// import OCIPoweredBadge from '../components/OCIPoweredBadge';
 
 interface SentimentItem {
   id: string;
@@ -48,7 +50,7 @@ const AnalysisPage: React.FC = () => {
     }
 
     return (
-      <div className="table-container">
+      <div className="table-container fade-in">
         <table>
           <thead>
             <tr>
@@ -61,10 +63,14 @@ const AnalysisPage: React.FC = () => {
           </thead>
           <tbody>
             {results.map((item) => (
-              <tr key={item.id}>
+              <tr key={item.id} className="table-row">
                 <td>{item.id}</td>
                 <td>{item.summary}</td>
-                <td>{item.sentiment_score}</td>
+                <td>
+                  <div className="sentiment-pill" style={{ backgroundColor: getSentimentColor(item.sentiment_score) }}>
+                    {item.sentiment_score}
+                  </div>
+                </td>
                 <td>{`${item.date_created || 'N/A'} ${item.time_created || ''}`}</td>
                 <td>{`${item.date_ended || 'N/A'} ${item.time_ended || ''}`}</td>
               </tr>
@@ -82,9 +88,17 @@ const AnalysisPage: React.FC = () => {
 
     return (
       <div className="formatted-container">
-        {results.map((item) => (
-          <div key={item.id} className="result-card">
-            <h3>Complaint #{item.id}</h3>
+        {results.map((item, index) => (
+          <div key={item.id} className={`result-card card slide-up`} style={{ animationDelay: `${index * 0.1}s` }}>
+            <div className="result-header">
+              <h3>Complaint #{item.id}</h3>
+              <div 
+                className="sentiment-badge"
+                style={{ backgroundColor: getSentimentColor(item.sentiment_score) }}
+              >
+                {getSentimentLabel(item.sentiment_score)}
+              </div>
+            </div>
             <div className="result-content">
               <div className="result-summary">
                 <h4>Summary</h4>
@@ -148,6 +162,12 @@ const AnalysisPage: React.FC = () => {
     return '#4caf50'; // Green for positive
   };
 
+  const getSentimentLabel = (score: number): string => {
+    if (score <= 3) return 'Negative';
+    if (score <= 6) return 'Neutral';
+    return 'Positive';
+  };
+
   return (
     <div className="analysis-container">
       <div className="header">
@@ -155,6 +175,7 @@ const AnalysisPage: React.FC = () => {
           ← Back to Home
         </button>
         <h1>Sentiment Analysis Results</h1>
+        {/* Remove the OCIPoweredBadge component from here */}
       </div>
       
       {isLoading ? (
