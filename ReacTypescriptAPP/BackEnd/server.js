@@ -333,5 +333,5 @@ app.listen(PORT, () => {
   console.log('API endpoints:');
   console.log('- GET /api/complaints: Get raw complaints data');
   console.log('- GET /api/analyze-complaints: Get sentiment analysis report');
-  console.log('- GET /api/analyze-complaints/classtype: Get self classified complaints');
+  console.log('- GET /api/analyze-complaints/classtype: Get classified complaints');
 });
